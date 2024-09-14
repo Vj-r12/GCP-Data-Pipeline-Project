@@ -1,0 +1,35 @@
+#######################     PLEASE DO NOT WRITE BOTH IMAGES DOCKER FILE INSTRUCTIONS IN ONE FILE.     #######################
+
+
+# NOTE :- FIRST BUILD PIPELINE 1 IMAGE & NEXT BUILD PIPELINE 2 IMAGE. {ONE AFTER ONE NOT AT A TIME}
+
+# DOCKERFILE FOR PIPELINE 1.
+
+
+FROM python:3.9-slim
+
+WORKDIR /Extract_DataPipeline_Storage
+
+COPY . .
+
+RUN pip install google-cloud-bigquery
+
+CMD [ "python", "Extract_DataPipeline_Script.py" ]
+
+
+
+# DOCKERFILE FOR PIPELINE 2.
+
+
+# NOTE :- AFTER BUILDING PIPEPLINE 1 IMAGE THAN BUILD PIPELINE 2 IMAGE. {ONE AFTER ONE NOT AT A TIME}
+
+
+FROM python:3.9-slim
+
+WORKDIR /ETL_DataPipeline_storage
+
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "ETL_DataPipeline_Script.py"]

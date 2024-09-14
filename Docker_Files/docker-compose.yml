@@ -1,0 +1,56 @@
+version: '3.3'
+services:
+  extract_datapipeline_gcp:
+    image: vjr12/extract_datapipeline_gcp:latest
+    container_name: extract_data_gcp_pipeline1_cont
+    volumes:
+      - .:/app
+    command: python Extract_DataPipeline_Script.py
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json    # service account key credentail.
+
+  etl_datapipeline_gcp:
+    image: vjr12/etl_datapipeline_gcp:latest
+    container_name: gcp_etl_pipeline2_cont
+    # it will depends on extract_datapipeline_gcp service once the first service runs successfull then second service go up.
+    depends_on:
+      - extract_datapipeline_gcp  
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json  # service account key credentail.
+
+
+# NOTE :- 
+# BEFORE USING YAML FILE. TO RUN THE IMAGES. PLEASE PUSH THE BUILDED TWO IMAGES TO DOCKER HUB & THEN USE DOCKER-COMPOSE.YAML FILE TO RUN THE IMAGES.
+
+# COMMANDS FOR PUSHING IMAGES TO DOCKER HUB.
+
+# FIRST TAG THE BUILDED IMAGES.
+
+# IMAGE 1. -->> EXTRACT_DATAPIPELINE_GCP.
+
+# docker tag extract_datapipeline_gcp:latest docker_hub_username/repository_name
+
+# IMAGE 2. -->> ETL_DATAPIPELINE_GCP.
+
+# docker tag etl_datapipeline_gcp:latest docker_hub_username/repository_name
+
+# NOTE :- AFTER TAGGING IMAGES PLEASE SEE DOCKER IMAGES USING THIS COMMAND :- docker images
+
+# PUSHING EXTRACT_DATAPIPELINE_GCP IMAGE.
+
+# docker push docker_hub_username/repository_name
+
+# PUSHING ETL_DATAPIPELINE_GCP IMAGE.
+
+# docker push docker_hub_username/repository_name
+
+
+# AFTER THIS ALL STEPS FOLLOWED & THEN USING DOCKER-COMPOSE.YML FILE.
+
+# COMMANDS FOR USING DOCKER-COMPOSE.YAML.
+
+# docker-compose up -d :- it will up the compose file. & containers will run in detached mode.
+
+# docker-compose run service_name :- to run single container means run only that service name belongs to that image.
+
+# docker-compose down :- it will stop running the containers.
